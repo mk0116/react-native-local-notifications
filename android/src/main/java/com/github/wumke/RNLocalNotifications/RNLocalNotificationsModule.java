@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static android.app.AlarmManager.INTERVAL_DAY;
+
 public class RNLocalNotificationsModule extends ReactContextBaseJavaModule {
 
     ReactApplicationContext reactContext;
@@ -85,24 +87,12 @@ public class RNLocalNotificationsModule extends ReactContextBaseJavaModule {
         intent.putExtra("smallIconName", smallIconName);
         intent.putExtra("smallIconType", smallIconType);
 
-        PendingIntent mAlarmSender = PendingIntent.getBroadcast(reactContext, id, intent, 0);
+        PendingIntent mAlarmSender = PendingIntent.getBroadcast(reactContext, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Calendar date = Calendar.getInstance();
         if(timeInMillis > date.getTimeInMillis()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { //API LVL 23, Android 6
-                alarmManager.setExactAndAllowWhileIdle (AlarmManager.RTC_WAKEUP, timeInMillis, mAlarmSender);
-            }
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //API LVL 21, Android 5
-                AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(timeInMillis, mAlarmSender);
-                alarmManager.setAlarmClock (info, mAlarmSender);
-
-            }
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //API LVL 19, Android 4.4
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, mAlarmSender);
-            }
-            else { //<19
-                alarmManager.set(AlarmManager.RTC_WAKEUP, timeInMillis, mAlarmSender);
-            }
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                    timeInMillis, INTERVAL_DAY, mAlarmSender);
         }
     }
 

@@ -51,6 +51,7 @@ RCT_EXPORT_METHOD(setAndroidIcons:(NSString *)largeIconName largeIconType:(NSStr
         notification.timeZone = [NSTimeZone defaultTimeZone];
         notification.alertBody = text;
         notification.alertAction = @"Open";
+        notification.repeatInterval = NSCalendarUnitDay;
         NSMutableDictionary *md = [[NSMutableDictionary alloc] init];
         [md setValue:[NSNumber numberWithInteger:id] forKey:@"id"];
         [md setValue:text forKey:@"text"];
